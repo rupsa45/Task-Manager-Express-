@@ -66,3 +66,17 @@ export const getTask= asyncHandler(async(req,res)=>{
     }
     res.status(200).json({task});
 })
+
+export const completedTask =asyncHandler(async(req,res)=>{
+ const task = await Task.find({
+  completed: true
+ });
+ res.status(200).json({task});
+})
+
+export const incompletedTask =asyncHandler(async(req,res)=>{
+  const task = await Task.find({
+   completed: false
+  });
+  res.status(200).json({task});
+ })
