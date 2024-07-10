@@ -56,14 +56,24 @@ export const login = asyncHandler(async (req, res) => {
 });
 
 
-export const logout = asyncHandler(async(req,res)=>{
+export const logout = asyncHandler(async (req, res) => {
   try {
-    res.cookie('jwt','',{
-      httpOnly:true,
-      expires:new Date(0)
+    res.cookie('jwt', '', {
+      httpOnly: true,
+      expires: new Date(0)
     });
-    res.status(200).json({message:"User logged out successfully"})
+    res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
-    console.log(error);
+    console.error('Error logging out:', error);
+    res.status(500).json({ message: "Failed to log out user" });
+  }
+});
+
+export const getProfile= asyncHandler(async(req,res)=>{
+  try {
+    const user = await User.findById(req.user._id).select('-password')
+    res.status(200).json({message:"User profile fetched successfully",user})
+  }catch(err){
+    console.log(err)
   }
 })
