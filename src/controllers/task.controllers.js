@@ -3,8 +3,11 @@ import Task from "../models/tasks.models.js";
 
 export const createTask = asyncHandler(async (req, res) => {
   try {
-    const { title, description, completed } = req.body;
-
+    const { 
+      title,
+      description, 
+      completed ,
+    } = req.body;
     const task = await Task.create({
       title,
       description,
@@ -28,10 +31,10 @@ export const updateTask = asyncHandler(async (req, res) => {
       { new: true, runValidators: true }
     );
     if (!taskUpdate) {
-        console.log("Task not found");
-        res.status(404).json({ message: "Task not found" });
-        return;
-      }
+      console.log("Task not found");
+      res.status(404).json({ message: "Task not found" });
+      return;
+    }
 
     res
       .status(200)
@@ -42,41 +45,46 @@ export const updateTask = asyncHandler(async (req, res) => {
 });
 
 export const deleteTask = asyncHandler(async (req, res) => {
-    const taskId = req.params.id;
-  
-    const task = await Task.findOneAndDelete({ _id: taskId });
-  
-    if (!task) {
-      return res.status(404).json({ message: "Task not found" });
-    }
-  
-    res.status(200).json({ message: "Task deleted successfully" });
+  const taskId = req.params.id;
+
+  const task = await Task.findOneAndDelete({ _id: taskId });
+
+  if (!task) {
+    return res.status(404).json({ message: "Task not found" });
+  }
+
+  res.status(200).json({ message: "Task deleted successfully" });
 });
 
-export const getAllTask =asyncHandler(async(req,res)=>{
-    const tasks = await Task.find();
-    res.status(200).json({tasks});
-})
+export const getAllTask = asyncHandler(async (req, res) => {
+  const userId = req.user._id; // Extract the user ID from the request object
+  try {
+    const tasks = await Task.find({ createdBy: userId }); // Filter tasks by the user ID
+    res.status(200).json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
-export const getTask= asyncHandler(async(req,res)=>{
-    const taskId = req.params.id;
-    const task = await Task.findById(taskId);
-    if(!task){
-        return res.status(404).json({message:"Task not found" });
-    }
-    res.status(200).json({task});
-})
+export const getTask = asyncHandler(async (req, res) => {
+  const taskId = req.params.id;
+  const task = await Task.findById(taskId);
+  if (!task) {
+    return res.status(404).json({ message: "Task not found" });
+  }
+  res.status(200).json(task);
+});
 
-export const completedTask =asyncHandler(async(req,res)=>{
- const task = await Task.find({
-  completed: true
- });
- res.status(200).json({task});
-})
-
-export const incompletedTask =asyncHandler(async(req,res)=>{
+export const completedTask = asyncHandler(async (req, res) => {
   const task = await Task.find({
-   completed: false
+    completed: true,
   });
-  res.status(200).json({task});
- })
+  res.status(200).json({ task });
+});
+
+export const incompletedTask = asyncHandler(async (req, res) => {
+  const task = await Task.find({
+    completed: false,
+  });
+  res.status(200).json({ task });
+});

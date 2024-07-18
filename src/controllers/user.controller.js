@@ -1,7 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.models.js";
 import bcrypt from "bcryptjs";
-import generateToken from '../utils/generateToken.js'
+import generateToken from "../utils/generateToken.js";
 
 export const signUp = asyncHandler(async (req, res) => {
   try {
@@ -41,39 +41,46 @@ export const login = asyncHandler(async (req, res) => {
       return res.status(400).json({ message: "User does not exist" });
     }
     //check if password is correct or not
-    const isPasswordCorrect = await bcrypt.compare(password, userExist.password);
+    const isPasswordCorrect = await bcrypt.compare(
+      password,
+      userExist.password
+    );
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Password is incorrect" });
     }
     //generate token
-    const token = generateToken(res,userExist._id)
+    const token = generateToken(res, userExist._id);
     res.status(200).json({ message: "User logged in successfully", token });
-    
   } catch (error) {
     console.log(error);
     return res.status(400).json({ message: "Invalid email or password" });
   }
 });
 
-
 export const logout = asyncHandler(async (req, res) => {
   try {
-    res.cookie('jwt', '', {
-      httpOnly: true,
-      expires: new Date(0)
+    res.cookie("jwt", "", {
+      maxAge: 0,
     });
     res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
-    console.error('Error logging out:', error);
+    console.error("Error logging out:", error);
     res.status(500).json({ message: "Failed to log out user" });
   }
 });
 
-export const getProfile= asyncHandler(async(req,res)=>{
+export const getCurrentUser = asyncHandler(async (req, res) => {
   try {
-    const user = await User.findById(req.user._id).select('-password')
-    res.status(200).json({message:"User profile fetched successfully",user})
-  }catch(err){
-    console.log(err)
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+      res.json({
+        _id: user._id,
+        username: user.username,
+        email: user.email,
+      });
+    }
+  } catch (error) {
+    res.status(404).json({ message: "User not found" });
   }
-})
+});
