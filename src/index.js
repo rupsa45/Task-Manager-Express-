@@ -1,20 +1,40 @@
 import connectDB from "./config/connectDB.js";
-import app from "./app.js";
 import dotenv from "dotenv";
-import morgan  from 'morgan';
-
+import morgan from "morgan";
+import cors from "cors";
 dotenv.config({
-    path:'./.env'
-})
+  path: "./.env",
+});
+import express from "express";
 
-app.use(morgan('dev'));
+import cookieParser from "cookie-parser";
+
+const app = express();
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN,
+  credentials: true,
+};
+
+app.use(cors(corsOptions));
+app.use(morgan("dev"));
+app.use(express.json({ limit: "16kb" }));
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+app.use(cookieParser());
 
 connectDB()
-.then(()=>{
-    app.listen(process.env.PORT || 4000,()=>{
-        console.log(`Server is running on port :  http://localhost:${process.env.PORT}`)
-    })
-})
-.catch((error)=>{
-    console.log('Error connecting to database',error) ;   
-})
+  .then(() => {
+    app.listen(process.env.PORT || 4000, () => {
+      console.log(
+        `Server is running on port :  http://localhost:${process.env.PORT}`
+      );
+    });
+  })
+  .catch((error) => {
+    console.log("Error connecting to database", error);
+  });
+
+import userRouter from "./routes/user.routes.js";
+app.use("/api/users", userRouter);
+
+import taskRouter from "./routes/task.routes.js";
+app.use("/api/tasks", taskRouter);

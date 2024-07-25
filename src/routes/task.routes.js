@@ -4,7 +4,6 @@ import {
   updateTask,
   deleteTask,
   getAllTask,
-  getTask,
   completedTask,
   incompletedTask,
 } from "../controllers/task.controllers.js";
@@ -19,7 +18,6 @@ router
 
 router
   .route("/:id")
-  .get(authentication, getTask)
   .put(authentication, updateTask)
   .delete(authentication, deleteTask);
 

@@ -8,7 +8,9 @@ export const createTask = asyncHandler(async (req, res) => {
       description, 
       completed ,
     } = req.body;
+    const userId = req.user._id;
     const task = await Task.create({
+      createdBy:userId,
       title,
       description,
       completed,
@@ -27,7 +29,11 @@ export const updateTask = asyncHandler(async (req, res) => {
   try {
     const taskUpdate = await Task.findByIdAndUpdate(
       taskID,
-      { title, description, completed },
+      {
+        title, 
+        description, 
+        completed 
+      },
       { new: true, runValidators: true }
     );
     if (!taskUpdate) {
@@ -66,25 +72,21 @@ export const getAllTask = asyncHandler(async (req, res) => {
   }
 });
 
-export const getTask = asyncHandler(async (req, res) => {
-  const taskId = req.params.id;
-  const task = await Task.findById(taskId);
-  if (!task) {
-    return res.status(404).json({ message: "Task not found" });
-  }
-  res.status(200).json(task);
-});
-
 export const completedTask = asyncHandler(async (req, res) => {
-  const task = await Task.find({
-    completed: true,
-  });
-  res.status(200).json({ task });
+  try {
+    const tasks = await Task.find({ completed: true });
+    res.json(tasks);
+} catch (error) {
+    console.error('Error fetching completed tasks:', error);
+    res.status(500).json({ message: error.message });
+}
 });
 
 export const incompletedTask = asyncHandler(async (req, res) => {
-  const task = await Task.find({
-    completed: false,
-  });
-  res.status(200).json({ task });
+  try {
+    const tasks = await Task.find({ completed: false });
+    res.status(200).json(tasks);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching incomplete tasks' });
+  }
 });
