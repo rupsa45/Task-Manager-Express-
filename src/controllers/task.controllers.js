@@ -73,8 +73,9 @@ export const getAllTask = asyncHandler(async (req, res) => {
 });
 
 export const completedTask = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
   try {
-    const tasks = await Task.find({ completed: true });
+    const tasks = await Task.find({ createdBy: userId,completed: true });
     res.json(tasks);
 } catch (error) {
     console.error('Error fetching completed tasks:', error);
@@ -83,8 +84,9 @@ export const completedTask = asyncHandler(async (req, res) => {
 });
 
 export const incompletedTask = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
   try {
-    const tasks = await Task.find({ completed: false });
+    const tasks = await Task.find({createdBy: userId, completed: false });
     res.status(200).json(tasks);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching incomplete tasks' });
