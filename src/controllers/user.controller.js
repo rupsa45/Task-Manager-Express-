@@ -3,6 +3,14 @@ import { User } from "../models/user.models.js";
 import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
 
+export const isLoggedIn =asyncHandler(async(req,res)=>{
+  try {
+    res.status(200).json({ loggedIn: true });
+  } catch (error) {
+    res.status(400).json({ message: "Error" });
+  }
+})
+
 export const signUp = asyncHandler(async (req, res) => {
   try {
     const { username, email, password } = req.body;
