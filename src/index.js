@@ -33,12 +33,11 @@ connectDB()
     console.log("Error connecting to database", error);
   });
 
-app.get("/health",asyncHandler(async(req,res)=>{
+app.get("/health",async(req,res)=>{
   res.send({meassage:"health is ok!"})
-}))
+})
 import userRouter from "./routes/user.routes.js";
 app.use("/api/users", userRouter);
 
 import taskRouter from "./routes/task.routes.js";
-import { asyncHandler } from "./utils/asyncHandler.js";
 app.use("/api/tasks", taskRouter);

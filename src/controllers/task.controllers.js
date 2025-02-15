@@ -1,7 +1,6 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
 import Task from "../models/tasks.models.js";
 
-export const createTask = asyncHandler(async (req, res) => {
+export const createTask = async (req, res) => {
   try {
     const { 
       title,
@@ -20,9 +19,9 @@ export const createTask = asyncHandler(async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-});
+};
 
-export const updateTask = asyncHandler(async (req, res) => {
+export const updateTask = async (req, res) => {
   const taskID = req.params.id;
   const { title, description, completed } = req.body;
 
@@ -48,9 +47,9 @@ export const updateTask = asyncHandler(async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-});
+};
 
-export const deleteTask = asyncHandler(async (req, res) => {
+export const deleteTask = async (req, res) => {
   const taskId = req.params.id;
 
   const task = await Task.findOneAndDelete({ _id: taskId });
@@ -60,9 +59,9 @@ export const deleteTask = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json({ message: "Task deleted successfully" });
-});
+};
 
-export const getAllTask = asyncHandler(async (req, res) => {
+export const getAllTask = async (req, res) => {
   const userId = req.user._id; // Extract the user ID from the request object
   try {
     const tasks = await Task.find({ createdBy: userId }); // Filter tasks by the user ID
@@ -70,9 +69,9 @@ export const getAllTask = asyncHandler(async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-});
+};
 
-export const completedTask = asyncHandler(async (req, res) => {
+export const completedTask = async (req, res) => {
   const userId = req.user._id;
   try {
     const tasks = await Task.find({ createdBy: userId,completed: true });
@@ -81,9 +80,9 @@ export const completedTask = asyncHandler(async (req, res) => {
     console.error('Error fetching completed tasks:', error);
     res.status(500).json({ message: error.message });
 }
-});
+};
 
-export const incompletedTask = asyncHandler(async (req, res) => {
+export const incompletedTask = async (req, res) => {
   const userId = req.user._id;
   try {
     const tasks = await Task.find({createdBy: userId, completed: false });
@@ -91,4 +90,4 @@ export const incompletedTask = asyncHandler(async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error fetching incomplete tasks' });
   }
-});
+};

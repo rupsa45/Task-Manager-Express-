@@ -1,17 +1,16 @@
-import { asyncHandler } from "../utils/asyncHandler.js";
 import { User } from "../models/user.models.js";
 import bcrypt from "bcryptjs";
 import generateToken from "../utils/generateToken.js";
 
-export const isLoggedIn =asyncHandler(async(req,res)=>{
+export const isLoggedIn =async(req,res)=>{
   try {
     res.status(200).json({ loggedIn: true });
   } catch (error) {
     res.status(400).json({ message: "Error" });
   }
-})
+}
 
-export const signUp = asyncHandler(async (req, res) => {
+export const signUp = async (req, res) => {
   try {
     const { username, email, password } = req.body;
     if ([username, email, password].some((fields) => fields?.trim() === "")) {
@@ -35,9 +34,9 @@ export const signUp = asyncHandler(async (req, res) => {
   } catch (error) {
     console.log(error);
   }
-});
+};
 
-export const login = asyncHandler(async (req, res) => {
+export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     if ([email, password].some((fields) => fields?.trim() === "")) {
@@ -63,9 +62,9 @@ export const login = asyncHandler(async (req, res) => {
     console.log(error);
     return res.status(400).json({ message: "Invalid email or password" });
   }
-});
+};
 
-export const logout = asyncHandler(async (req, res) => {
+export const logout = async (req, res) => {
   try {
     res.cookie("jwt", "", {
       maxAge: 0,
@@ -75,9 +74,9 @@ export const logout = asyncHandler(async (req, res) => {
     console.error("Error logging out:", error);
     res.status(500).json({ message: "Failed to log out user" });
   }
-});
+};
 
-export const getCurrentUser = asyncHandler(async (req, res) => {
+export const getCurrentUser = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
@@ -91,4 +90,4 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
   } catch (error) {
     res.status(404).json({ message: "User not found" });
   }
-});
+};

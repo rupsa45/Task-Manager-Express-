@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { User } from '../models/user.models.js'
-import { asyncHandler } from '../utils/asyncHandler.js'
 
-const authentication =asyncHandler(async(req,res,next)=>{
+const authentication =async(req,res,next)=>{
     const token = req.cookies.jwt;
 
     if (!token) {
@@ -24,6 +23,6 @@ const authentication =asyncHandler(async(req,res,next)=>{
         res.status(401);
         throw new Error('Not authorized, token failed');
     }
-})
+};
 
 export default authentication;
